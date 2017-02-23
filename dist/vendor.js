@@ -1,5 +1,9 @@
 (function(FuseBox){FuseBox.$fuse$=FuseBox;
 FuseBox.pkg("default", {}, function(___scope___){
+___scope___.file("additionalVendors.js", function(exports, require, module, __filename, __dirname){ 
+
+require('date-fns/locale/fr');
+});
 });
 FuseBox.pkg("date-fns", {}, function(___scope___){
 ___scope___.file("index.js", function(exports, require, module, __filename, __dirname){ 
@@ -6386,6 +6390,216 @@ function subYears (dirtyDate, amount) {
 }
 
 module.exports = subYears
+
+});
+___scope___.file("locale/fr/index.js", function(exports, require, module, __filename, __dirname){ 
+
+var buildDistanceInWordsLocale = require('./build_distance_in_words_locale/index.js')
+var buildFormatLocale = require('./build_format_locale/index.js')
+
+/**
+ * @category Locales
+ * @summary French locale.
+ * @author Jean Dupouy [@izeau]{@link https://github.com/izeau}
+ */
+module.exports = {
+  distanceInWords: buildDistanceInWordsLocale(),
+  format: buildFormatLocale()
+}
+
+});
+___scope___.file("locale/fr/build_distance_in_words_locale/index.js", function(exports, require, module, __filename, __dirname){ 
+
+function buildDistanceInWordsLocale () {
+  var distanceInWordsLocale = {
+    lessThanXSeconds: {
+      one: 'moins d’une seconde',
+      other: 'moins de {{count}} secondes'
+    },
+
+    xSeconds: {
+      one: '1 seconde',
+      other: '{{count}} secondes'
+    },
+
+    halfAMinute: '30 secondes',
+
+    lessThanXMinutes: {
+      one: 'moins d’une minute',
+      other: 'moins de {{count}} minutes'
+    },
+
+    xMinutes: {
+      one: '1 minute',
+      other: '{{count}} minutes'
+    },
+
+    aboutXHours: {
+      one: 'environ 1 heure',
+      other: 'environ {{count}} heures'
+    },
+
+    xHours: {
+      one: '1 heure',
+      other: '{{count}} heures'
+    },
+
+    xDays: {
+      one: '1 jour',
+      other: '{{count}} jours'
+    },
+
+    aboutXMonths: {
+      one: 'environ 1 mois',
+      other: 'environ {{count}} mois'
+    },
+
+    xMonths: {
+      one: '1 mois',
+      other: '{{count}} mois'
+    },
+
+    aboutXYears: {
+      one: 'environ 1 an',
+      other: 'environ {{count}} ans'
+    },
+
+    xYears: {
+      one: '1 an',
+      other: '{{count}} ans'
+    },
+
+    overXYears: {
+      one: 'plus d’un an',
+      other: 'plus de {{count}} ans'
+    },
+
+    almostXYears: {
+      one: 'presqu’un an',
+      other: 'presque {{count}} ans'
+    }
+  }
+
+  function localize (token, count, options) {
+    options = options || {}
+
+    var result
+    if (typeof distanceInWordsLocale[token] === 'string') {
+      result = distanceInWordsLocale[token]
+    } else if (count === 1) {
+      result = distanceInWordsLocale[token].one
+    } else {
+      result = distanceInWordsLocale[token].other.replace('{{count}}', count)
+    }
+
+    if (options.addSuffix) {
+      if (options.comparison > 0) {
+        return 'dans ' + result
+      } else {
+        return 'il y a ' + result
+      }
+    }
+
+    return result
+  }
+
+  return {
+    localize: localize
+  }
+}
+
+module.exports = buildDistanceInWordsLocale
+
+});
+___scope___.file("locale/fr/build_format_locale/index.js", function(exports, require, module, __filename, __dirname){ 
+
+var buildFormattingTokensRegExp = require('../../_lib/build_formatting_tokens_reg_exp/index.js')
+
+function buildFormatLocale () {
+  var months3char = ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juill.', 'août', 'sept.', 'oct.', 'nov.', 'déc.']
+  var monthsFull = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre']
+  var weekdays2char = ['di', 'lu', 'ma', 'me', 'je', 've', 'sa']
+  var weekdays3char = ['dim.', 'lun.', 'mar.', 'mer.', 'jeu.', 'ven.', 'sam.']
+  var weekdaysFull = ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi']
+  var meridiemUppercase = ['AM', 'PM']
+  var meridiemLowercase = ['am', 'pm']
+  var meridiemFull = ['du matin', 'de l’après-midi', 'du soir']
+
+  var formatters = {
+    // Month: Jan, Feb, ..., Dec
+    'MMM': function (date) {
+      return months3char[date.getMonth()]
+    },
+
+    // Month: January, February, ..., December
+    'MMMM': function (date) {
+      return monthsFull[date.getMonth()]
+    },
+
+    // Day of week: Su, Mo, ..., Sa
+    'dd': function (date) {
+      return weekdays2char[date.getDay()]
+    },
+
+    // Day of week: Sun, Mon, ..., Sat
+    'ddd': function (date) {
+      return weekdays3char[date.getDay()]
+    },
+
+    // Day of week: Sunday, Monday, ..., Saturday
+    'dddd': function (date) {
+      return weekdaysFull[date.getDay()]
+    },
+
+    // AM, PM
+    'A': function (date) {
+      return (date.getHours() / 12) >= 1 ? meridiemUppercase[1] : meridiemUppercase[0]
+    },
+
+    // am, pm
+    'a': function (date) {
+      return (date.getHours() / 12) >= 1 ? meridiemLowercase[1] : meridiemLowercase[0]
+    },
+
+    // a.m., p.m.
+    'aa': function (date) {
+      var hours = date.getHours()
+
+      if (hours <= 12) {
+        return meridiemFull[0]
+      }
+
+      if (hours <= 16) {
+        return meridiemFull[1]
+      }
+
+      return meridiemFull[2]
+    }
+  }
+
+  // Generate ordinal version of formatters: M -> Mo, D -> Do, etc.
+  var ordinalFormatters = ['M', 'D', 'DDD', 'd', 'Q', 'W']
+  ordinalFormatters.forEach(function (formatterToken) {
+    formatters[formatterToken + 'o'] = function (date, formatters) {
+      return ordinal(formatters[formatterToken](date))
+    }
+  })
+
+  return {
+    formatters: formatters,
+    formattingTokensRegExp: buildFormattingTokensRegExp(formatters)
+  }
+}
+
+function ordinal (number) {
+  if (number === 1) {
+    return '1er'
+  }
+
+  return number + 'e'
+}
+
+module.exports = buildFormatLocale
 
 });
 return ___scope___.entry = "index.js";

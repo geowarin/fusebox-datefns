@@ -5,7 +5,7 @@ fsbx.FuseBox.init({
   cache: false,
   log: false
 }).bundle({
-  [`dist/vendor.js`]: "+date-fns +date-fns/locale/fr"
+  [`dist/vendor.js`]: "+date-fns additionalVendors.js"
 }).then(bundle => {
   if (!bundle) throw new Error("Could not generate bundle")
 });
